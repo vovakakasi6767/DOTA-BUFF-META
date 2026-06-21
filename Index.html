@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Dota 2 Meta Analyzer — Dotabuff Style</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="nav-bar">
+    <div class="nav-logo">
+        <i class="fas fa-shield-alt" style="color: #ed3b14;"></i>
+        DOTA<span>BUFF</span> META
+    </div>
+    <div class="nav-right">
+        <div id="userInfo" style="display: none;">
+            <span id="usernameDisplay" style="color: #a9cf46; margin-right: 15px;"></span>
+            <button id="logoutBtn" class="nav-btn">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </button>
+        </div>
+        <div id="authButtons">
+            <button onclick="window.location.href='pages/login.html'" class="nav-btn">
+                <i class="fas fa-sign-in-alt"></i> Войти
+            </button>
+            <button onclick="window.location.href='pages/register.html'" class="nav-btn nav-btn-primary">
+                <i class="fas fa-user-plus"></i> Регистрация
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="page-header">
+        <div class="header-content">
+            <div>
+                <h1>Герои и Метаанализ патча 7.41a</h1>
+                <div class="subtitle">Статистика, автоматический поиск, живые иконки предметов, синергия и контрпики.</div>
+            </div>
+            <div id="userBuildsBtn" style="display: none;">
+                <button onclick="showUserBuilds()" class="btn-primary">
+                    <i class="fas fa-folder-open"></i> Мои сборки
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="two-columns">
+        <div class="sidebar">
+            <div class="panel">
+                <div class="panel-header">
+                    <span><i class="fas fa-trophy" style="color: #ed3b14;"></i> Рейтинг героев</span>
+                </div>
+                <div class="panel-content" style="padding: 10px;">
+                    
+                    <div class="search-container">
+                        <input type="text" id="heroSearchInput" class="search-input" placeholder="Поиск героя по названию...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+
+                    <div class="role-tabs" id="categoryTabs">
+                        <button class="tab-btn active" data-category="all">Все</button>
+                        <button class="tab-btn" data-category="carry">Керри</button>
+                        <button class="tab-btn" data-category="mid">Мид</button>
+                        <button class="tab-btn" data-category="offlane">Хард</button>
+                        <button class="tab-btn" data-category="support">Сапп</button>
+                    </div>
+
+                    <div class="scrollable-table">
+                        <table class="db-table">
+                            <thead>
+                                <tr>
+                                    <th>Герой</th>
+                                    <th style="text-align: right;">Винрейт</th>
+                                </tr>
+                            </thead>
+                            <tbody id="heroListContainer"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="panel" id="detailsCard">
+                <div class="panel-header" id="detailHeroName">
+                    <span>Аналитика героя</span>
+                </div>
+                <div class="panel-content" id="detailContent">
+                    <div class="empty-state">
+                        <i class="fas fa-chess-queen" style="font-size: 3rem; color: #455568; margin-bottom: 15px;"></i>
+                        <p>Выберите героя из списка слева, чтобы открыть подробную статистику матча, сборки предметов и контрпики.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span><i class="fas fa-chart-line" style="color: #a9cf46;"></i> Тренды текущего патча (Meta Insights)</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                        <div style="flex: 1; min-width: 150px;">
+                            <div class="section-title">Лидеры патча</div>
+                            <div class="badge-list" id="trendsHeroesContainer"></div>
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <div class="section-title">Популярные предметы</div>
+                            <div class="items-flex" id="trendsItemsContainer"></div>
+                        </div>
+                    </div>
+                    <div class="db-note">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Сводка меты:</strong> В текущих реалиях доминируют керри дальнего боя (Clinkz, Shadow Fiend) и мобильные мидеры. В качестве противодействия рекомендуется использовать иллюзионистов (Phantom Lancer, Naga Siren) или сейв-механики (Oracle, Tusk).
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для сборок -->
+<div id="buildModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="buildModalTitle"><i class="fas fa-hammer"></i> Мои сборки</h2>
+            <span class="close" onclick="closeBuildModal()">&times;</span>
+        </div>
+        <div class="modal-body" id="buildModalBody">
+            <!-- Содержимое загружается динамически -->
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>Dota Buff Meta</h4>
+            <p>Аналитика героев и сборок для Dota 2</p>
+        </div>
+        <div class="footer-section">
+            <p>Данные основаны на симуляции статистики Dotabuff для версий 7.41a / 7.40c.</p>
+            <p>Изображения предметов и героев предоставлены Valve Corporation via Steam CDN.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/builds.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
